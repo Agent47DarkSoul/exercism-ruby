@@ -1,20 +1,23 @@
+class Fixnum
+  def divisible_by?(number)
+    self % number == 0
+  end
+end
+
 module Raindrops
   RAINDROPS = { 3 => 'Pling', 5 => 'Plang', 7 => 'Plong' }
 
-  def convert(number)
-    converted = prime_factors(number).uniq.map { |n| RAINDROPS[n] }.compact
-    converted.empty? ? number.to_s : converted.join
+  def self.convert(number)
+    raindrops_of(number) || number.to_s
   end
 
-  def prime_factors(number, by = 2)
-    return [by] if by >= number
-
-    if number % by == 0
-      [by] + prime_factors(number / by, by)
-    else
-      prime_factors(number, by + 1)
+  def self.raindrops_of(number)
+    RAINDROPS.inject(nil) do |transform, (factor, raindrop_of_factor)|
+      if number.divisible_by?(factor)
+        "#{transform}#{raindrop_of_factor}"
+      else
+        transform
+      end
     end
   end
-
-  module_function :convert, :prime_factors
 end
